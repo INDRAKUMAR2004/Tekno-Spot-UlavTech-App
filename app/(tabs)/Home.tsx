@@ -33,7 +33,6 @@ export default function Home() {
   const { user } = useUser();
   const initial = user?.name?.charAt(0).toUpperCase() || "M";
 
-  
   useEffect(() => {
     if (params.clearCart === "true") {
       clearCart();
@@ -42,10 +41,10 @@ export default function Home() {
   }, [params]);
 
   const cartTotal = cartItems.reduce(
-  (sum: number, item: { price: number; quantity: number }) =>
-    sum + item.price * item.quantity,
-  0
-);
+    (sum: number, item: { price: number; quantity: number }) =>
+      sum + item.price * item.quantity,
+    0
+  );
 
   const totalItems = cartItems.reduce(
     (sum: number, item: { quantity: number }) => sum + item.quantity,
@@ -59,9 +58,10 @@ export default function Home() {
     : PRODUCT_DATA;
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={styles.screen}>
       <Stack.Screen options={{ headerShown: false }} />
 
+      {/* Header */}
       <View style={styles.header}>
         <MyHeader />
       </View>
@@ -72,13 +72,14 @@ export default function Home() {
           <View style={styles.searchBoxContainer}>
             <FontAwesome
               name="search"
-              size={20}
-              color="#888"
+              size={18}
+              color="#416944"
               style={styles.searchIcon}
             />
             <TextInput
               style={styles.searchBox}
               placeholder="Search Our Products"
+              placeholderTextColor="#6b6b6b"
               value={search}
               onChangeText={setSearch}
             />
@@ -92,9 +93,7 @@ export default function Home() {
                 <ProductCard item={item} onAddToCart={() => addToCart(item)} />
               )}
               ListEmptyComponent={
-                <Text style={{ textAlign: "center", marginTop: 20 }}>
-                  No items found.
-                </Text>
+                <Text style={styles.noItemsText}>No items found.</Text>
               }
               numColumns={2}
               scrollEnabled={false}
@@ -106,38 +105,36 @@ export default function Home() {
 
               {/* Fast Moving Section */}
               <View style={styles.titlebar}>
-                <Text style={styles.titleLeftText}>Fast Moving</Text>
+                <Text style={styles.titleLeftText}>⚡ Fast Moving</Text>
                 <TouchableOpacity
                   onPress={() => router.push("/componentTabs/mainComponents")}
                 >
                   <Text style={styles.titleRightText}>
-                    View All{" "}
-                    <FontAwesome name="arrow-right" size={12} color={"#416944"} />
+                    View All <FontAwesome name="arrow-right" size={12} color="#416944" />
                   </Text>
                 </TouchableOpacity>
               </View>
+
               <FastMovingRow />
 
               {/* Fruits & Veggies Section */}
-              <View style={[styles.titlebar, { marginTop: 10 }]}>
+              <View style={[styles.titlebar, { marginTop: 16 }]}>
                 <Text style={styles.titleLeftText}>
-                  24-Hours delivery-fresh fruits & vegetables
+                  🥬 24-Hour Delivery – Fresh Fruits & Vegetables
                 </Text>
                 <TouchableOpacity
                   onPress={() => router.push("/componentTabs/mainComponents")}
                 >
                   <Text style={styles.titleRightText}>
-                    View All{" "}
-                    <FontAwesome name="arrow-right" size={12} color={"#416944"} />
+                    View All <FontAwesome name="arrow-right" size={12} color="#416944" />
                   </Text>
                 </TouchableOpacity>
               </View>
 
-              <Text style={{ padding: 15 }}>
+              <Text style={styles.subInfoText}>
                 Get select items delivered within 24 hours!
               </Text>
 
-              {/* Horizontal Scroll Products */}
               <ScrollView horizontal showsHorizontalScrollIndicator={false}>
                 {PRODUCT_DATA.map((item) => (
                   <ProductCard
@@ -152,7 +149,7 @@ export default function Home() {
         </View>
       </ScrollView>
 
-      {/* Cart Summary */}
+      {/* 🛒 Cart Summary */}
       {cartItems.length > 0 && (
         <CartSummary
           totalItems={totalItems}
@@ -165,12 +162,9 @@ export default function Home() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  screen: {
     flex: 1,
-    backgroundColor: "#fff",
-    paddingHorizontal: 16,
-    paddingTop: 10,
-    paddingBottom: 70,
+    backgroundColor: "#F8FAF6",
   },
   header: {
     backgroundColor: "#fff",
@@ -180,51 +174,70 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     paddingHorizontal: 12,
     paddingVertical: 10,
+    borderBottomWidth: 0.5,
+    borderColor: "#e0e0e0",
   },
-  profileCircle: {
-    width: 35,
-    height: 35,
-    borderRadius: 18,
-    backgroundColor: "#416944",
-    justifyContent: "center",
-    alignItems: "center",
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    paddingHorizontal: 16,
+    paddingTop: 10,
+    paddingBottom: 70,
   },
-  profileText: { color: "#fff", fontWeight: "bold" },
   searchBoxContainer: {
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor: "#F1F4EE",
+    borderRadius: 12,
+    paddingHorizontal: 12,
+    marginBottom: 18,
     borderWidth: 1,
-    backgroundColor: "#EFF2EB",
-    borderColor: "#EFF2EB",
-    borderRadius: 8,
-    paddingHorizontal: 10,
-    marginBottom: 16,
+    borderColor: "#E0E7DA",
+    elevation: 1,
   },
   searchIcon: {
     marginRight: 8,
-    color: "#416944",
   },
   searchBox: {
     flex: 1,
-    paddingVertical: 8,
-    fontWeight: "700",
+    paddingVertical: 10,
+    fontWeight: "600",
+    fontSize: 14,
+    color: "#2D2D2D",
   },
   titlebar: {
-    backgroundColor: "#DFE4D9",
+    backgroundColor: "#E8EFE6",
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
     paddingVertical: 10,
     borderRadius: 10,
     paddingHorizontal: 10,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 3,
+    elevation: 1,
   },
   titleLeftText: {
     fontWeight: "900",
     fontSize: 13,
+    color: "#2E3B2E",
   },
   titleRightText: {
     fontWeight: "900",
     fontSize: 12,
     color: "#416944",
+  },
+  subInfoText: {
+    color: "#6b6b6b",
+    fontSize: 13,
+    padding: 15,
+    paddingBottom: 10,
+  },
+  noItemsText: {
+    textAlign: "center",
+    marginTop: 20,
+    color: "gray",
+    fontWeight: "600",
   },
 });

@@ -1,15 +1,18 @@
-// app/PaymentScreen.tsx
 import React from "react";
 import { View, Text, TouchableOpacity, Alert, StyleSheet } from "react-native";
 import { useAuth } from "../context/AuthContext";
 import { useCart } from "../context/CartContext";
 import { useRouter } from "expo-router";
+import { getFirestore, collection, addDoc, serverTimestamp } from "firebase/firestore";
+import { app } from "../firebaseConfig"; // ensure you have firebaseConfig.ts setup properly
 
 export default function PaymentScreen() {
   const { firebaseUser } = useAuth();
-  const { cartItems, cartItems: items, clearCart } = useCart();
+  const { cartItems: items, clearCart } = useCart();
   const totalCost = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const router = useRouter();
+
+  const db = getFirestore(app);
 
   if (!firebaseUser) {
     return (
@@ -27,9 +30,26 @@ export default function PaymentScreen() {
 
   const handlePay = async () => {
     try {
-     
+      // Save order details to Firestore
+      const orderData = {
+        uid: firebaseUser.uid,
+        items: items.map((item) => ({
+          id: item.id,
+          name: item.name,
+          price: item.price,
+          quantity: item.quantity,
+          image: item.image || null,
+        })),
+        totalAmount: totalCost,
+        createdAt: serverTimestamp(),
+        status: "Paid",
+      };
+
+      await addDoc(collection(db, "orders"), orderData);
+
+      // Clear the cart and show success message
       clearCart();
-      Alert.alert("Payment succeeded");
+      Alert.alert("Payment succeeded", "Your order has been placed successfully!");
       router.push("/(tabs)/Home");
     } catch (err: any) {
       Alert.alert("Payment failed", err.message || String(err));

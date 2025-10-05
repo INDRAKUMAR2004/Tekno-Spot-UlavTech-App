@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Alert } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Alert, ScrollView, Image } from "react-native";
 import React from "react";
 import { Stack, useRouter } from "expo-router";
 import { FontAwesome, AntDesign, MaterialIcons, Ionicons } from "@expo/vector-icons";
@@ -6,10 +6,12 @@ import PaymentIcon from "./Components/SvgIcons/paymentIcon";
 import { useAuth } from "../context/AuthContext";
 import { signOut } from "firebase/auth";
 import { auth } from "@/firebaseConfig";
+import { useUser } from "@/UserContext";
 
 export default function Profile() {
   const router = useRouter();
-  const { user, userData } = useAuth();
+  const { user } = useUser();
+  const { userData } = useAuth();
 
   const handleLogout = async () => {
     try {
@@ -22,125 +24,170 @@ export default function Profile() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: "#f9f9f9", paddingTop: 30 }}>
-      <Stack.Screen options={{ headerTitle: "" }} />
+    <View style={styles.container}>
+      <Stack.Screen options={{ headerTitle: "Profile" }} />
 
-      {/* Profile Header */}
+      {/* 🔹 Profile Header */}
       <View style={styles.profileHeader}>
         <View style={styles.profileCircle}>
-          <FontAwesome name="user" size={32} />
-        </View>
-        <AntDesign
-          name="edit"
-          size={20}
-          style={{ paddingTop: 5 }}
+  {userData?.photoURL ? (
+    <Image
+      source={{ uri: userData.photoURL }}
+      style={styles.profileImage}
+    />
+  ) : (
+    <FontAwesome name="user" size={40} color="#416944" />
+  )}
+</View>
+
+        <TouchableOpacity
+          style={styles.editIcon}
           onPress={() => router.push("/PersonalInfo")}
-        />
+        >
+          <AntDesign name="edit" size={18} color="#416944" />
+        </TouchableOpacity>
         <Text style={styles.profileName}>{userData?.name || "No Name"}</Text>
         <Text style={styles.profileEmail}>{userData?.email || user?.email}</Text>
         <Text style={styles.profilePhone}>{userData?.phone || "No Phone Added"}</Text>
       </View>
 
-      {/* Account Settings */}
-      <Text style={styles.proTitle}>Account Settings</Text>
-      <View style={styles.accountSetting}>
-        <ScrollView horizontal style={{ paddingVertical: 15 }}>
-          <FontAwesome name="user" size={20} />
-          <TouchableOpacity onPress={() => router.push("/PersonalInfo")}>
-            <Text style={styles.menu}> Personal Information</Text>
+      <ScrollView
+        style={{ flex: 1 }}
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ paddingBottom: 30 }}
+      >
+        {/* 🔹 Account Settings */}
+        <Text style={styles.sectionTitle}>Account Settings</Text>
+        <View style={styles.card}>
+          <TouchableOpacity
+            style={styles.row}
+            onPress={() => router.push("/PersonalInfo")}
+          >
+            <FontAwesome name="user" size={20} color="#416944" />
+            <Text style={styles.menu}>Personal Information</Text>
           </TouchableOpacity>
-        </ScrollView>
-        <ScrollView horizontal style={{ paddingVertical: 15 }}>
-          <MaterialIcons name="password" size={20} />
-          <TouchableOpacity>
+
+          <TouchableOpacity style={styles.row} onPress={() => router.push("/ChangePassword")}>
+            <MaterialIcons name="password" size={20} color="#416944" />
             <Text style={styles.menu}>Change Password</Text>
           </TouchableOpacity>
-        </ScrollView>
-        <ScrollView horizontal style={{ paddingVertical: 15 }}>
-          <Ionicons name="location-outline" size={20} />
-          <TouchableOpacity>
+
+          <TouchableOpacity style={styles.row}>
+            <Ionicons name="location-outline" size={20} color="#416944" />
             <Text style={styles.menu}>Delivery Address</Text>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
+        </View>
 
-      {/* Payment Method */}
-      <Text style={styles.proTitle}>Payment Method</Text>
-      <View style={styles.accountSetting}>
-        <ScrollView horizontal>
-          <PaymentIcon />
-          <TouchableOpacity>
+        {/* 🔹 Payment Method */}
+        <Text style={styles.sectionTitle}>Payment Method</Text>
+        <View style={styles.card}>
+          <TouchableOpacity style={styles.row}>
+            <PaymentIcon />
             <Text style={styles.menu}>Add Payment Method</Text>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
+        </View>
 
-      {/* Logout */}
-      <Text style={styles.proTitle}>Logout</Text>
-      <View style={styles.accountSetting}>
-        <ScrollView horizontal>
-          <MaterialIcons name="logout" size={20} />
-          <TouchableOpacity onPress={handleLogout}>
-            <Text style={styles.menu}>Logout</Text>
+        {/* 🔹 Logout */}
+        <Text style={styles.sectionTitle}>Logout</Text>
+        <View style={[styles.card, { marginBottom: 30 }]}>
+          <TouchableOpacity style={styles.row} onPress={handleLogout}>
+            <MaterialIcons name="logout" size={20} color="#d9534f" />
+            <Text style={[styles.menu, { color: "#d9534f" }]}>Logout</Text>
           </TouchableOpacity>
-        </ScrollView>
-      </View>
+        </View>
+      </ScrollView>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#f4f7f5",
+    marginTop: 20,
+  },
   profileHeader: {
     margin: 20,
-    padding: 20,
+    padding: 25,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 8,
-    elevation: 10,
+    backgroundColor: "#fff",
+    borderRadius: 14,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 2 },
+    elevation: 6,
+    position: "relative",
   },
   profileCircle: {
-    backgroundColor: "#ffe",
+    backgroundColor: "#ecf2ee",
     alignItems: "center",
     justifyContent: "center",
-    borderWidth: 0.5,
-    padding: 20,
-    width: 70,
-    height: 70,
-    borderRadius: 50,
+    width: 80,
+    height: 80,
+    borderRadius: 40,
     marginBottom: 10,
   },
+  profileImage: {
+  width: 80,
+  height: 80,
+  borderRadius: 40,
+},
+  editIcon: {
+    position: "absolute",
+    top: 15,
+    right: 15,
+    backgroundColor: "#eaf3ec",
+    padding: 6,
+    borderRadius: 8,
+  },
   profileName: {
-    fontWeight: "600",
+    fontWeight: "700",
     fontSize: 20,
-    paddingTop: 5,
+    color: "#333",
+    marginTop: 5,
   },
   profileEmail: {
-    fontWeight: "300",
-    color: "#666",
+    color: "#555",
+    fontSize: 14,
+    marginTop: 2,
   },
   profilePhone: {
-    fontWeight: "300",
-    color: "#666",
+    color: "#777",
+    fontSize: 13,
+    marginTop: 2,
   },
-  proTitle: {
-    color: "rgba(153, 153, 153, 1)",
-    fontSize: 18,
+  sectionTitle: {
+    color: "#888",
+    fontSize: 16,
+    fontWeight: "600",
     marginHorizontal: 20,
-    marginTop: 10,
+    marginTop: 15,
+    marginBottom: 5,
   },
-  accountSetting: {
-    margin: 20,
-    padding: 20,
-    alignItems: "flex-start",
-    justifyContent: "center",
-    backgroundColor: "white",
-    borderRadius: 8,
-    elevation: 5,
+  card: {
+    marginHorizontal: 20,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    marginBottom: 10,
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    shadowOffset: { width: 0, height: 2 },
+  },
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingVertical: 12,
   },
   menu: {
-    fontWeight: "bold",
-    paddingLeft: 20,
     fontSize: 15,
+    fontWeight: "600",
+    color: "#333",
+    paddingLeft: 15,
   },
 });

@@ -48,13 +48,13 @@ export default function CategoryScreen() {
 
   const filteredSections = search
     ? sections
-      .map((section) => ({
-        ...section,
-        data: section.data.filter((item) =>
-          item.name.toLowerCase().includes(search.toLowerCase())
-        ),
-      }))
-      .filter((section) => section.data.length > 0)
+        .map((section) => ({
+          ...section,
+          data: section.data.filter((item) =>
+            item.name.toLowerCase().includes(search.toLowerCase())
+          ),
+        }))
+        .filter((section) => section.data.length > 0)
     : sections;
 
   const noResults = search && filteredSections.length === 0;
@@ -64,12 +64,14 @@ export default function CategoryScreen() {
 
   const renderGridItem = ({ item }: { item: Category }) => (
     <View style={styles.gridItem}>
-      <TouchableOpacity onPress={() =>
-        router.push({
-          pathname: "/componentTabs/mainComponents",
-          params: { category: item.name }, 
-        })
-      }>
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/componentTabs/mainComponents",
+            params: { category: item.name },
+          })
+        }
+      >
         <View>
           <Image source={item.image} style={styles.imagePlaceholder} />
           <Text style={styles.categoryName}>{item.name}</Text>
@@ -79,32 +81,34 @@ export default function CategoryScreen() {
   );
 
   const renderListItem = ({ item }: { item: Category }) => (
-    <View //style={styles.listItem}
-    >
-      <TouchableOpacity onPress={() =>
-        router.push({
-          pathname: "/componentTabs/mainComponents",
-          params: { category: item.name }, 
-        })
-      }>
+    <View>
+      <TouchableOpacity
+        onPress={() =>
+          router.push({
+            pathname: "/componentTabs/mainComponents",
+            params: { category: item.name },
+          })
+        }
+      >
         <View style={styles.listItem}>
-          <Image source={item.image} style={styles.imagePlaceholder} />
-      <View style={{ flex: 1 }}>
-        <Text style={styles.categoryName}>{item.name}</Text>
-      </View>
-      <Ionicons name="chevron-forward" size={22} color="#333" />
+          <Image source={item.image} style={styles.listImage} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.listCategoryName}>{item.name}</Text>
+          </View>
+          <Ionicons name="chevron-forward" size={22} color="#416944" />
         </View>
       </TouchableOpacity>
     </View>
   );
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: "#fff" }}>
+    <SafeAreaView style={styles.safeArea}>
       <Stack.Screen options={{ headerShown: false }} />
 
+      {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => router.push("/(tabs)/Home")}>
-          <Ionicons name="arrow-back" size={22} color="#000" />
+          <Ionicons name="arrow-back" size={22} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>All Categories</Text>
         <TouchableOpacity onPress={() => router.push("/Profile")}>
@@ -117,29 +121,29 @@ export default function CategoryScreen() {
       {/* Search Bar + Toggle */}
       <View style={styles.searchRow}>
         <View style={styles.searchBar}>
-          <Ionicons name="search" size={18} color="gray" />
+          <Ionicons name="search" size={18} color="#416944" />
           <TextInput
-            placeholder="Search Our Products"
+            placeholder="Search our products..."
+            placeholderTextColor="#888"
             value={search}
             onChangeText={setSearch}
-            style={{ marginLeft: 8, flex: 1 }}
+            style={styles.searchInput}
           />
         </View>
         <TouchableOpacity onPress={toggleView} style={styles.toggleBtn}>
           {isGrid ? (
-            <MaterialIcons name="list" size={22} color="#333" />
+            <MaterialIcons name="list" size={22} color="#416944" />
           ) : (
-            <Ionicons name="grid" size={22} color="#333" />
+            <Ionicons name="grid" size={22} color="#416944" />
           )}
         </TouchableOpacity>
       </View>
 
-      {/* Categories with Section Headers */}
+      {/* Categories Section */}
       {noResults ? (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-          <Text style={{ fontSize: 16, fontWeight: "600", color: "gray" }}>
-            Item not found
-          </Text>
+        <View style={styles.emptyContainer}>
+          <Ionicons name="alert-circle-outline" size={60} color="#ccc" />
+          <Text style={styles.emptyText}>No items found</Text>
         </View>
       ) : (
         <SectionList
@@ -159,10 +163,8 @@ export default function CategoryScreen() {
               )}
             </View>
           )}
-          renderItem={({ item }) =>
-            !isGrid ? renderListItem({ item }) : null
-          }
-          contentContainerStyle={{ padding: 12 }}
+          renderItem={({ item }) => (!isGrid ? renderListItem({ item }) : null)}
+          contentContainerStyle={{ paddingBottom: 20 }}
         />
       )}
     </SafeAreaView>
@@ -170,77 +172,145 @@ export default function CategoryScreen() {
 }
 
 const styles = StyleSheet.create({
+  safeArea: {
+    flex: 1,
+    backgroundColor: "#F8FDF8",
+  },
   header: {
-    paddingTop: 30,
+    paddingTop: 45,
+    paddingBottom: 15,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  headerTitle: { fontSize: 18, fontWeight: "bold" },
-  profileCircle: {
-    width: 35,
-    height: 35,
-    borderRadius: 18,
+    paddingHorizontal: 16,
     backgroundColor: "#416944",
+    elevation: 3,
+    shadowColor: "#000",
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+  },
+  headerTitle: {
+    fontSize: 20,
+    fontWeight: "700",
+    color: "#fff",
+  },
+  profileCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
   },
-  profileText: { color: "#fff", fontWeight: "bold" },
+  profileText: { color: "#416944", fontWeight: "bold", fontSize: 16 },
+
+  // Search bar section
   searchRow: {
     flexDirection: "row",
     alignItems: "center",
-    paddingHorizontal: 12,
-    marginBottom: 10,
+    paddingHorizontal: 16,
+    marginTop: 12,
+    marginBottom: 8,
   },
   searchBar: {
     flex: 1,
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F5F5F5",
-    borderRadius: 8,
+    backgroundColor: "#fff",
+    borderRadius: 10,
     paddingHorizontal: 10,
-    height: 40,
+    height: 42,
+    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 2,
+  },
+  searchInput: {
+    marginLeft: 8,
+    flex: 1,
+    color: "#333",
+    fontSize: 14,
   },
   toggleBtn: {
     marginLeft: 10,
     padding: 8,
-    borderRadius: 8,
-    backgroundColor: "#F5F5F5",
+    borderRadius: 10,
+    backgroundColor: "#fff",
+    elevation: 2,
   },
+
+  // Grid view
   gridItem: {
     flex: 1,
     margin: 6,
-    backgroundColor: "#F9FFF9",
+    backgroundColor: "#fff",
     borderRadius: 12,
     alignItems: "center",
     padding: 14,
-    elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
+    elevation: 3,
   },
+  imagePlaceholder: {
+    width: 70,
+    height: 70,
+    borderRadius: 35,
+    backgroundColor: "#F0F0F0",
+    marginBottom: 8,
+  },
+  categoryName: {
+    fontSize: 14,
+    fontWeight: "600",
+    color: "#333",
+    textAlign: "center",
+  },
+
+  // List view
   listItem: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#F9FFF9",
+    backgroundColor: "#fff",
     borderRadius: 12,
     padding: 12,
     marginVertical: 6,
     elevation: 2,
+    shadowColor: "#000",
+    shadowOpacity: 0.1,
+    shadowRadius: 3,
   },
-  imagePlaceholder: {
+  listImage: {
     width: 60,
     height: 60,
-    borderRadius: 30,
-    backgroundColor: "#E0E0E0",
-    marginBottom: 8,
+    borderRadius: 12,
+    marginRight: 12,
   },
-  categoryName: { fontSize: 15, fontWeight: "bold", textAlign: "center" },
-  sectionHeader: {
-    fontSize: 16,
-    fontWeight: "700",
-    marginTop: 10,
-    marginBottom: 6,
-    marginLeft: 6,
+  listCategoryName: {
+    fontSize: 15,
+    fontWeight: "600",
     color: "#333",
+  },
+
+  // Section header
+  sectionHeader: {
+    fontSize: 17,
+    fontWeight: "700",
+    marginTop: 14,
+    marginBottom: 6,
+    marginLeft: 8,
+    color: "#416944",
+  },
+
+  // Empty view
+  emptyContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  emptyText: {
+    fontSize: 16,
+    fontWeight: "600",
+    color: "gray",
+    marginTop: 10,
   },
 });

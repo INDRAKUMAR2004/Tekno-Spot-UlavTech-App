@@ -4,6 +4,7 @@ import { auth, db } from "../firebaseConfig";
 import { doc, getDoc, setDoc } from "firebase/firestore";
 
 interface UserData {
+  photoURL: any;
   name?: string;
   phone?: string;
   email?: string;

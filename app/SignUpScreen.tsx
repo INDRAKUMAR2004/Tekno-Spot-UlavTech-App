@@ -100,3 +100,5 @@ const styles = StyleSheet.create({
   buttonText: { color: "#fff", fontSize: 18, fontWeight: "bold" },
   link: { marginTop: 20, color: "blue" },
 });
+
+
