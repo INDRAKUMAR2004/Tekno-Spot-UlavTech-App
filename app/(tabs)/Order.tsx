@@ -50,10 +50,26 @@ export default function Orders() {
 
   if (loading)
     return (
+      <SafeAreaView style={styles.safeArea}>
+      <Stack.Screen options={{ headerShown: false }} />
+
+      {/* Header */}
+      <View style={styles.header}>
+        <TouchableOpacity onPress={() => router.push("/(tabs)/Home")}>
+          <Ionicons name="arrow-back" size={22} color="#fff" />
+        </TouchableOpacity>
+        <Text style={styles.headerTitle}>My Orders</Text>
+        <TouchableOpacity onPress={() => router.push("/Profile")}>
+          <View style={styles.profileCircle}>
+            <Text style={styles.profileText}>{initial}</Text>
+          </View>
+        </TouchableOpacity>
+      </View>
       <View style={styles.centered}>
         <ActivityIndicator size="large" color="#416944" />
         <Text style={{ marginTop: 10, color: "#555" }}>Loading orders...</Text>
       </View>
+      </SafeAreaView>
     );
 
   if (!firebaseUser)
